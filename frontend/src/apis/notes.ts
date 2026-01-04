@@ -8,6 +8,7 @@ export interface Notes{
   content: string;
   createdAt: string;
   updatedAt: string;
+  tags: string[];
 }
 
 export interface NoteFilter{
@@ -18,26 +19,6 @@ export interface NoteFilter{
 
 }
 
-
-export const useCreateNote = () => {
-  // Implementation for creating a note
-  const quearyClient = useQueryClient();
-
-const createNote = async (noteData: { title: string; content: string }) => {
-  const response = await api.post('/notes', noteData);
-  return response.data;
-}; 
-
-return useMutation( 
-
-  {mutationFn: createNote,
-  onSuccess: () => {
-    quearyClient.invalidateQueries(['notes']);
-  },
-}); 
-
-
-}
 
 export const useGetNotes = ({limit, page, search, tags}:NoteFilter) => {
 
@@ -59,13 +40,55 @@ export const useGetNotes = ({limit, page, search, tags}:NoteFilter) => {
     queryFn: fetchNotes,
   })
 
-  // Implementation for fetching notes
+
+}
+
+export const useCreateNote = () => {
+  const queryClient = useQueryClient();
+
+  const createNote = async (noteData: { title: string; content: string }) => {
+    const response = await api.post('/notes', noteData);
+    return response.data;
+  }; 
+
+  return useMutation( 
+    {mutationFn: createNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+    },
+  }); 
 }
 
 export const useUpdateNote = () => {
-  // Implementation for updating a note
+const queryClient = useQueryClient();
+
+  const updateNote = async ({id, noteData}: {id:number, noteData: { title?: string; content?: string }}) => {
+    const response = await api.put(`/notes/${id}`, noteData);
+    return response.data;
+  };
+  
+  return useMutation(
+    {mutationFn: updateNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+    },
+  });
+
 }
 
+
 export const useDeleteNote = () => {
-  // Implementation for deleting a note
+  const queryClient = useQueryClient();
+
+  const deleteNote = async (id: number) => {
+    const response = await api.delete(`/notes/${id}`);
+    return response.data;
+  };
+
+  return useMutation(
+    {mutationFn: deleteNote,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['notes'] });
+    },
+  });
 }
