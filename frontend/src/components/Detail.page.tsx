@@ -1,34 +1,21 @@
-import {  type FC } from "react";
 // import { useParams, useNavigate } from "react-router-dom"; // Uncomment for real routing
-import { 
-  ArrowLeft, 
-  Calendar, 
-  Clock, 
-  Edit3, 
-  Trash2, 
-  Share2, 
-  // MoreVertical,
-  // ChevronLeft
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  Edit3,
+  Share2,
+  Trash2,
 } from "lucide-react";
-import type { Notes } from "../apis/notes";
+import type { FC } from "react";
 
 
-interface NoteDetailProps {
-  note: Notes;
+interface Props{
+  noteId:string;
 }
-const NoteDetail:FC<NoteDetailProps> = ({ note }) => {
-  // const { id } = useParams();
-  // const navigate = useNavigate();
-  
-  // Mock data for display - in real app, fetch this via useGetNote(id)
-  // const note = {
-  //   id: 1,
-  //   title: "Project Brainstorming",
-  //   content: `## Goals for Q1\n\n1. Launch the new landing page.\n2. Integrate the feedback loop in the user dashboard.\n3. Research competitor UI patterns.\n\n### Key Takeaways\nWe need to focus on performance and accessibility. The current lighthouse score is 82, we want to hit 95+. \n\nCheck with the dev team about the API latency issues we saw yesterday.`,
-  //   tags: ["Work", "Design", "Planning"],
-  //   createdAt: "2024-01-01T10:30:00Z",
-  //   updatedAt: "2024-01-05T14:20:00Z",
-  // };
+  const NoteDetail:FC<Props> = ({noteId}) => {
+
+ 
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {

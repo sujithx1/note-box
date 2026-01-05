@@ -1,9 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
+import NoteDetail from '../components/Detail.page';
 
 export const Route = createFileRoute('/index/$id')({
-  component: RouteComponent,
+  component: NoteDetailRoute,
 })
 
-function RouteComponent() {
-  return <div>Hello "/index/$id"!</div>
+function NoteDetailRoute() {
+
+  const {id}= Route.useParams();
+  return <NoteDetail noteId={id} />;
 }
