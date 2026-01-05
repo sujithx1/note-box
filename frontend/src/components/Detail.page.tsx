@@ -8,6 +8,7 @@ import {
   Trash2,
 } from "lucide-react";
 import type { FC } from "react";
+import { useGetNoteById } from "../apis/notes";
 
 
 interface Props{
@@ -15,7 +16,23 @@ interface Props{
 }
   const NoteDetail:FC<Props> = ({noteId}) => {
 
- 
+
+
+    const {data: note, isLoading, isError} = useGetNoteById(Number(noteId));
+
+
+    if (isLoading) {
+      return <div className="min-h-screen flex items-center justify-center">
+        <span className="text-gray-500">Loading note...</span>
+      </div>;
+    }
+
+    if (isError || !note) {
+      return <div className="min-h-screen flex items-center justify-center">
+        <span className="text-red-500">Error loading note. Please try again later.</span>
+      </div>;
+    }
+
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -59,7 +76,7 @@ interface Props{
         {/* Note Header */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">
-            {note.tags?.map(tag => (
+            {note?.tags?.map((tag:string) => (
               <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-semibold uppercase tracking-wider rounded-full">
                 #{tag}
               </span>

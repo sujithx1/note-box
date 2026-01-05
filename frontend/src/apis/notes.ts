@@ -92,3 +92,18 @@ export const useDeleteNote = () => {
     },
   });
 }
+
+
+
+export const useGetNoteById = (id: number) => {
+
+  const fetchNoteById = async () => {
+    const res= await api.get(`/notes/${id}`);
+    return res.data;
+  };  
+
+  return useQuery({
+    queryKey: ['note', id],
+    queryFn: fetchNoteById,
+  })
+} 
