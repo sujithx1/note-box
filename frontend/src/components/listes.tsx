@@ -4,7 +4,7 @@ import NoteCard from "./NoteCard";
 // Note: You might need to install lucide-react for icons: npm install lucide-react
 import { ChevronLeft, ChevronRight, Plus, Search } from "lucide-react";
 import TagSelector from "./MultiSelect";
-import NoteDetail from "./Detail.page";
+import { useNavigate } from "@tanstack/react-router";
 
 const dummyData: Notes[] = [
   {
@@ -29,7 +29,7 @@ const Listes = () => {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [tags, setTags] = useState<string[]>([]);
-  const [note,setNote ]= useState<Notes|null>(null);
+  const navigate=useNavigate();
 
   // Toggle tag selection (example logic)
   // const handleTagInput = (val: string) => {
@@ -42,7 +42,6 @@ const Listes = () => {
 
   return (
     <>
-    {note && <NoteDetail note={note}  />}
     <div className="min-h-screen bg-gray-50 p-6 md:p-12">
       <div className="max-w-6xl mx-auto">
         
@@ -78,7 +77,7 @@ const Listes = () => {
         {dummyData.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {dummyData.map((note) => (
-              <div key={note.id} className="transform hover:-translate-y-1 transition-transform duration-200" onClick={() => setNote(note)}>
+              <div key={note.id} className="transform hover:-translate-y-1 transition-transform duration-200" onClick={() => navigate({to: "/index/$id", params: { id : note.id.toString() }  })}>
                 <NoteCard note={note} />
               </div>
             ))}
