@@ -1,17 +1,14 @@
-import { Pool } from 'pg';
+import { drizzle } from "drizzle-orm/node-postgres";
+import { Pool } from "pg";
+import * as schema from "./schema";
 
-import { drizzle } from 'drizzle-orm/node-postgres'
-import { env } from 'bun';
-import * as schema from './schema';
-// 1️⃣ Create Postgres connection pool
-const pool = new Pool({
-  connectionString: env.DATABASE_URL!,
-  ssl: { rejectUnauthorized: false }, // required for Supabase/Neon
-})
+export const pool = new Pool({
+  connectionString:
+    "postgresql://postgres.hkssywilbmtqotzsesiv:Sujith%40123%23@aws-0-ap-south-1.pooler.supabase.com:5432/postgres?sslmode=no-verify",
+  ssl: {
+    rejectUnauthorized: false,
+  },
+});
 
-export const db = drizzle(pool, {
-  schema,
-  logger: false,
-})
-// Optional: export schema for queries
+export const db = drizzle(pool, { schema });
 export { schema };

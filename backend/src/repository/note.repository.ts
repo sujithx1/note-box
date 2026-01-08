@@ -25,6 +25,7 @@ async getNoteById(id: number): Promise<NoteEntity | null> {
 }
 
   async createNote(noteData: { title: string; content: string; tags?: string[] }): Promise<NoteEntity> {
+    console.log(noteData);
     const [row] = await db.insert(NoteSchema).values({
       title: noteData.title,
       content: noteData.content,
