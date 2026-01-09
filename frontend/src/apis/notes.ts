@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../axios/api";
 
 
-export interface Notes{
+export interface Note {
   id: number;
   title: string;
   content: string;
@@ -11,99 +11,96 @@ export interface Notes{
   updatedAt: string;
 }
 
-export interface NoteFilter{
-  search?:string;
-  tags?:string[];
+export interface NoteFilter {
+  search?: string;
+  tags?: string[];
   page?: number;
   limit?: number;
-
 }
 
 
-export const useGetNotes = ({limit, page, search, tags}:NoteFilter) => {
+export const useGetNotes = (filters: NoteFilter) => {
+  return useQuery<Note[], Error>({
+    queryKey: ["notes", filters],
+    queryFn: async () => {
+      const res = await api.get<Note[]>("/notes", {
+        params: {
+          ...filters,
+          tags: filters.tags?.join(","), // backend-friendly
+        },
+      });
+      return res.data;
+    },
 
-  const fetchNotes = async () => {
-    const res= await api.get('/notes', {
-      params: {
-        limit,
-        page,
-        search,
-        tags: tags?.join(','),
-      },
-    });
-    return res.data;
-  };
-
-
-  return useQuery({
-    queryKey: ['notes', { limit, page, search, tags }],
-    queryFn: fetchNotes,
-  })
+  });
+};
 
 
-}
+type CreateNoteInput = {
+  title: string;
+  content: string;
+  tags?: string[];
+};
 
 export const useCreateNote = () => {
   const queryClient = useQueryClient();
 
-  const createNote = async (noteData: { title: string; content: string }) => {
-    const response = await api.post('/notes', noteData);
-    return response.data;
-  }; 
-
-  return useMutation( 
-    {mutationFn: createNote,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
+  return useMutation<Note, Error, CreateNoteInput>({
+    mutationFn: async (noteData) => {
+      const res = await api.post<Note>("/notes", noteData);
+      return res.data;
     },
-  }); 
-}
-
-export const useUpdateNote = () => {
-const queryClient = useQueryClient();
-
-  const updateNote = async ({id, noteData}: {id:number, noteData: { title?: string; content?: string }}) => {
-    const response = await api.put(`/notes/${id}`, noteData);
-    return response.data;
-  };
-  
-  return useMutation(
-    {mutationFn: updateNote,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
+};
 
-}
+
+type UpdateNoteInput = {
+  id: number;
+  noteData: Partial<Pick<Note, "title" | "content" | "tags">>;
+};
+
+export const useUpdateNote = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<Note, Error, UpdateNoteInput>({
+    mutationFn: async ({ id, noteData }) => {
+      const res = await api.put<Note>(`/notes/${id}`, noteData);
+      return res.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
+    },
+  });
+};
 
 
 export const useDeleteNote = () => {
   const queryClient = useQueryClient();
 
-  const deleteNote = async (id: number) => {
-    const response = await api.delete(`/notes/${id}`);
-    return response.data;
-  };
-
-  return useMutation(
-    {mutationFn: deleteNote,
+  return useMutation<void, Error, number>({
+    mutationFn: async (id) => {
+      await api.delete(`/notes/${id}`);
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['notes'] });
+      queryClient.invalidateQueries({ queryKey: ["notes"] });
     },
   });
-}
+};
 
 
 
-export const useGetNoteById = (id: number) => {
 
-  const fetchNoteById = async () => {
-    const res= await api.get(`/notes/${id}`);
-    return res.data;
-  };  
 
-  return useQuery({
-    queryKey: ['note', id],
-    queryFn: fetchNoteById,
-  })
-} 
+export const useGetNoteById = (id?: number) => {
+  return useQuery<Note, Error>({
+    queryKey: ["note", id],
+    queryFn: async () => {
+      const res = await api.get<Note>(`/notes/${id}`);
+      return res.data;
+    },
+    enabled: Boolean(id), // 🔥 VERY IMPORTANT
+  });
+};

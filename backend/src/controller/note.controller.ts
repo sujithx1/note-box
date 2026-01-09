@@ -56,6 +56,12 @@ class Note_Controller {
     const notes=await this.findUseCase.execute({tag,searchQuery});
     return c.json(notes,200); 
   }
+
+  findByIdController=async(c:Context)=>{
+    const id=c.req.param("id");
+    const note=await this.findByIdUseCase.execute(id);
+    return c.json(note,200);
+  }
 }
 
 export default Note_Controller;

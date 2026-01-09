@@ -1,118 +1,75 @@
-import { useState } from "react";
-import { useCreateNote, type Notes } from "../apis/notes";
-import NoteCard from "./NoteCard";
 import { useNavigate } from "@tanstack/react-router";
-import { 
-  ChevronLeft, 
-  ChevronRight, 
-  Plus, 
-  Search, 
-  LayoutDashboard, 
-  StickyNote, 
-  Settings, 
+import {
   Bell,
-  Menu
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  Plus,
+  Search,
+  StickyNote
 } from "lucide-react";
-import TagSelector from "./MultiSelect";
+import { useState } from "react";
+import { useCreateNote, useGetNotes } from "../apis/notes";
 import NoteModal from "./Create.note";
-
-const dummyData: Notes[] = [
-  {
-    id: 1,
-    title: "Project Brainstorming",
-    content: "Need to finalize the wireframes for the new dashboard and talk to the design team about the color palette.",
-    createdAt: "2024-01-01T00:00:00Z",
-    updatedAt: "2024-01-01T00:00:00Z",
-    tags: ["Work", "Design", "Planning"],
-  },
-  {
-    id: 2,
-    title: "Grocery List",
-    content: "Milk, Eggs, Bread, Avocado, and some snacks for the weekend trip.",
-    createdAt: "2024-01-02T00:00:00Z",
-    updatedAt: "2024-01-02T00:00:00Z",
-    tags: ["Personal", "Shopping"],
-  },
-];
+import TagSelector from "./MultiSelect";
+import NoteCard from "./NoteCard";
 
 const Listes = () => {
-  // const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [tags, setTags] = useState<string[]>([]);
   const [openForm, setOpenForm] = useState(false);
   const navigate = useNavigate();
 
-  const  createMutate=useCreateNote();
+  const createMutate = useCreateNote();
 
   const handleSubmit = (noteData: { title: string; content: string; tags: string[] }) => {
-    console.log("Saving Note:", noteData);
-
     createMutate.mutate(noteData);
-
-    
-
-    
     setOpenForm(false);
   };
 
-  return (
-    <div className="flex h-screen w-full bg-slate-50 overflow-hidden font-sans antialiased text-slate-900">
-      
-      {/* 1. Sidebar (Hidden on Mobile) */}
-      <aside className="hidden md:flex flex-col w-64 bg-white border-r border-slate-200">
-        <div className="p-6 flex items-center gap-3">
-          <div className="w-8 h-8 bg-indigo-600 rounded-lg flex items-center justify-center text-white font-bold">N</div>
-          <span className="text-xl font-bold tracking-tight">Notepad.ai</span>
-        </div>
-        
-        <nav className="flex-1 px-4 space-y-1">
-          <NavItem icon={<LayoutDashboard size={20}/>} label="All Notes" active />
-          <NavItem icon={<StickyNote size={20}/>} label="Favorites" />
-          <NavItem icon={<Settings size={20}/>} label="Settings" />
-        </nav>
+  const { data: notes, isLoading } = useGetNotes({
+    limit: 10,
+    page: 1,
+    search,
+  });
 
-        <div className="p-4 mt-auto">
-          <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-            <p className="text-xs font-semibold text-slate-500 uppercase mb-2">Storage</p>
-            <div className="w-full bg-slate-200 h-1.5 rounded-full mb-2">
-              <div className="bg-indigo-600 h-1.5 rounded-full w-[65%]" />
-            </div>
-            <p className="text-xs text-slate-600">65% of 1GB used</p>
-          </div>
-        </div>
-      </aside>
+  return (
+    <div className="flex h-screen w-full bg-[#f8fafc] overflow-hidden font-sans antialiased text-slate-900">
+      
+      {/* 1. Sidebar - Refined with subtle borders and better padding */}
+   
 
       {/* 2. Main Content Area */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <main className="flex-1 flex flex-col min-w-0 overflow-hidden relative">
         
-        {/* Top Header/Navbar */}
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0">
+        {/* Top Header - Glassmorphism effect on scroll */}
+        <header className="h-20 bg-white/80 backdrop-blur-md border-b border-slate-200/60 flex items-center justify-between px-10 shrink-0 z-20">
           <div className="flex items-center md:hidden gap-4">
              <Menu className="text-slate-500" />
-             <span className="font-bold text-lg">Notepad.ai</span>
+             <span className="font-black text-lg">N.</span>
           </div>
 
-          <div className="flex-1 max-w-xl hidden md:block">
+          <div className="flex-1 max-w-2xl hidden md:block">
             <div className="relative group">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={18} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors" size={18} />
               <input
                 type="text"
-                placeholder="Search across all notes..."
-                className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-transparent rounded-lg focus:bg-white focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none"
+                placeholder="Search your thoughts..."
+                className="w-full pl-12 pr-4 py-2.5 bg-slate-100/50 border border-transparent rounded-xl focus:bg-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all outline-none text-sm"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors relative">
+          <div className="flex items-center gap-5">
+            <button className="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all relative group">
                <Bell size={20} />
-               <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+               <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white group-hover:scale-125 transition-transform"></span>
             </button>
             <button 
               onClick={() => setOpenForm(true)}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-semibold transition-all shadow-md shadow-indigo-100 active:scale-95"
+              className="flex items-center gap-2 bg-slate-900 hover:bg-indigo-600 text-white px-5 py-2.5 rounded-xl font-bold transition-all shadow-lg shadow-slate-200 hover:shadow-indigo-200 active:scale-95"
             >
               <Plus size={18} />
               <span className="hidden sm:inline">New Note</span>
@@ -120,28 +77,32 @@ const Listes = () => {
           </div>
         </header>
 
-        {/* Scrollable Content Grid */}
-        <div className="flex-1 overflow-y-auto p-8">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
           <div className="max-w-6xl mx-auto">
             
-            {/* Context Filters */}
-            <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            {/* Header Content */}
+            <div className="mb-10 flex flex-col sm:flex-row sm:items-end justify-between gap-6">
                <div>
-                  <h2 className="text-2xl font-bold text-slate-800 tracking-tight">Recent Notes</h2>
-                  <p className="text-slate-500 text-sm">Showing your latest updates from this week.</p>
+                  <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-2">My Notes</h1>
+                  <p className="text-slate-500 font-medium">Capture ideas, organize thoughts, and stay productive.</p>
                </div>
-               <div className="w-full sm:w-auto">
+               <div className="w-full sm:w-72">
                   <TagSelector selectedTags={tags} onTagsChange={setTags} />
                </div>
             </div>
 
-            {/* Grid */}
-            {dummyData.length > 0 ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
-                {dummyData.map((note) => (
+            {/* Grid - Improved spacing and loading states */}
+            {isLoading ? (
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 opacity-50">
+                  {[1,2,3].map(i => <div key={i} className="h-64 bg-slate-200 animate-pulse rounded-2xl" />)}
+               </div>
+            ) : notes && notes.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                {notes.map((note) => (
                   <div 
                     key={note.id} 
-                    className="cursor-pointer"
+                    className="h-full"
                     onClick={() => navigate({to: "/index/$id", params: { id : note.id.toString() } })}
                   >
                     <NoteCard note={note} />
@@ -149,23 +110,25 @@ const Listes = () => {
                 ))}
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center py-24 text-center">
-                <div className="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-400">
+              <div className="flex flex-col items-center justify-center py-32 text-center bg-white rounded-3xl border-2 border-dashed border-slate-200">
+                <div className="w-24 h-24 bg-indigo-50 rounded-3xl flex items-center justify-center mb-6 text-indigo-500 shadow-inner">
                   <StickyNote size={40} />
                 </div>
-                <h3 className="text-lg font-semibold text-slate-800">No notes found</h3>
-                <p className="text-slate-500 max-w-xs">Try adjusting your filters or create a new note to get started.</p>
+                <h3 className="text-xl font-bold text-slate-800">Your garden is empty</h3>
+                <p className="text-slate-500 max-w-xs mt-2 font-medium">Start planting your ideas and watch them grow.</p>
               </div>
             )}
 
-            {/* Modern Pagination */}
-            <footer className="mt-12 py-6 border-t border-slate-200 flex items-center justify-between">
-              <p className="text-sm text-slate-500 hidden sm:block">Showing 1-10 of 124 notes</p>
-              <div className="flex items-center gap-2 ml-auto sm:ml-0">
+            {/* Footer Pagination */}
+            <footer className="mt-16 py-8 border-t border-slate-200/60 flex items-center justify-between">
+              <p className="text-sm font-bold text-slate-400">PAGE 1 OF 12</p>
+              <div className="flex items-center gap-3">
                 <PaginationButton icon={<ChevronLeft size={18}/>} disabled />
-                <button className="w-8 h-8 rounded-lg bg-indigo-600 text-white text-sm font-bold">1</button>
-                <button className="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-200 text-sm font-medium">2</button>
-                <button className="w-8 h-8 rounded-lg text-slate-600 hover:bg-slate-200 text-sm font-medium">3</button>
+                <div className="flex items-center bg-slate-100 p-1 rounded-xl">
+                    <button className="px-4 py-1.5 rounded-lg bg-white shadow-sm text-indigo-600 text-xs font-black">1</button>
+                    <button className="px-4 py-1.5 rounded-lg text-slate-500 text-xs font-bold hover:text-slate-800">2</button>
+                    <button className="px-4 py-1.5 rounded-lg text-slate-500 text-xs font-bold hover:text-slate-800">3</button>
+                </div>
                 <PaginationButton icon={<ChevronRight size={18}/>} />
               </div>
             </footer>
@@ -173,7 +136,6 @@ const Listes = () => {
         </div>
       </main>
 
-      {/* Modal Overlay */}
       <NoteModal 
         isOpen={openForm} 
         onSubmit={handleSubmit} 
@@ -183,20 +145,12 @@ const Listes = () => {
   );
 }
 
-/* Helper UI Components to keep code clean */
-const NavItem = ({ icon, label, active = false }: { icon: React.ReactNode, label: string, active?: boolean }) => (
-  <button className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-    active ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-  }`}>
-    {icon}
-    {label}
-  </button>
-);
+
 
 const PaginationButton = ({ icon, disabled = false }: { icon: React.ReactNode, disabled?: boolean }) => (
   <button 
     disabled={disabled}
-    className="p-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+    className="p-2.5 rounded-xl border border-slate-200 bg-white text-slate-600 hover:border-indigo-300 hover:text-indigo-600 disabled:opacity-30 disabled:grayscale transition-all shadow-sm active:scale-90"
   >
     {icon}
   </button>
