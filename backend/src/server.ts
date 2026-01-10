@@ -1,6 +1,5 @@
-import { env } from "bun";
 import app from "./app";
-import { db, pool } from "./config/db";
+import { db } from "./config/db";
 import { NoteSchema } from "./config/schema";
 
 // process.on("SIGINT", async () => {
@@ -18,7 +17,7 @@ db.select().from(NoteSchema).execute().then(res=>console.log(res)).catch(err=>co
 
 
 
-const port=env.PORT || 4000;
+const port=process.env.PORT || 4000;
 Bun.serve({
   port,
   fetch: app.fetch,
