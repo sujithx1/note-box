@@ -10,35 +10,35 @@ import {
 import type { FC } from "react";
 import { useGetNoteById } from "../apis/notes";
 
-
-interface Props{
-  noteId:string;
+interface Props {
+  noteId: string;
 }
-  const NoteDetail:FC<Props> = ({noteId}) => {
+const NoteDetail: FC<Props> = ({ noteId }) => {
+  const { data: note, isLoading, isError } = useGetNoteById(Number(noteId));
 
-
-
-    const {data: note, isLoading, isError} = useGetNoteById(Number(noteId));
-
-
-    if (isLoading) {
-      return <div className="min-h-screen flex items-center justify-center">
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
         <span className="text-gray-500">Loading note...</span>
-      </div>;
-    }
+      </div>
+    );
+  }
 
-    if (isError || !note) {
-      return <div className="min-h-screen flex items-center justify-center">
-        <span className="text-red-500">Error loading note. Please try again later.</span>
-      </div>;
-    }
-
+  if (isError || !note) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="text-red-500">
+          Error loading note. Please try again later.
+        </span>
+      </div>
+    );
+  }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric'
+    return new Date(dateString).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
     });
   };
 
@@ -47,8 +47,8 @@ interface Props{
       {/* Top Navigation Bar */}
       <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
-          <button 
-            // onClick={() => navigate(-1)} 
+          <button
+            // onClick={() => navigate(-1)}
             className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors group"
           >
             <div className="p-2 group-hover:bg-indigo-50 rounded-full transition-colors">
@@ -76,13 +76,16 @@ interface Props{
         {/* Note Header */}
         <div className="mb-8">
           <div className="flex flex-wrap gap-2 mb-4">
-            {note?.tags?.map((tag:string) => (
-              <span key={tag} className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-semibold uppercase tracking-wider rounded-full">
+            {note?.tags?.map((tag: string) => (
+              <span
+                key={tag}
+                className="px-3 py-1 bg-gray-100 text-gray-600 text-xs font-semibold uppercase tracking-wider rounded-full"
+              >
                 #{tag}
               </span>
             ))}
           </div>
-          
+
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
             {note.title}
           </h1>
@@ -111,8 +114,12 @@ interface Props{
         <footer className="mt-16 pt-8 border-t border-gray-100">
           <div className="bg-indigo-50 rounded-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
-              <h4 className="font-semibold text-indigo-900">Finished with this note?</h4>
-              <p className="text-indigo-700 text-sm">You can archive it to keep your workspace clean.</p>
+              <h4 className="font-semibold text-indigo-900">
+                Finished with this note?
+              </h4>
+              <p className="text-indigo-700 text-sm">
+                You can archive it to keep your workspace clean.
+              </p>
             </div>
             <button className="whitespace-nowrap bg-white text-indigo-600 px-6 py-2 rounded-xl font-medium shadow-sm hover:shadow-md transition-all">
               Archive Note

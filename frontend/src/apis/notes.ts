@@ -1,7 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../axios/api";
 
-
 export interface Note {
   id: number;
   title: string;
@@ -18,7 +17,6 @@ export interface NoteFilter {
   limit?: number;
 }
 
-
 export const useGetNotes = (filters: NoteFilter) => {
   return useQuery<Note[], Error>({
     queryKey: ["notes", filters],
@@ -31,10 +29,8 @@ export const useGetNotes = (filters: NoteFilter) => {
       });
       return res.data;
     },
-
   });
 };
-
 
 type CreateNoteInput = {
   title: string;
@@ -56,7 +52,6 @@ export const useCreateNote = () => {
   });
 };
 
-
 type UpdateNoteInput = {
   id: number;
   noteData: Partial<Pick<Note, "title" | "content" | "tags">>;
@@ -76,7 +71,6 @@ export const useUpdateNote = () => {
   });
 };
 
-
 export const useDeleteNote = () => {
   const queryClient = useQueryClient();
 
@@ -89,10 +83,6 @@ export const useDeleteNote = () => {
     },
   });
 };
-
-
-
-
 
 export const useGetNoteById = (id?: number) => {
   return useQuery<Note, Error>({

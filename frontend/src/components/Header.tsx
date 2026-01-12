@@ -5,5 +5,5 @@ export default function Header() {
         <h1 className="text-xl font-bold">Notbox</h1>
       </div>
     </header>
-  )
+  );
 }

@@ -10,6 +10,7 @@
         "@tanstack/react-router-devtools": "^1.144.0",
         "axios": "^1.13.2",
         "lucide-react": "^0.562.0",
+        "prettier": "^3.7.4",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
       },

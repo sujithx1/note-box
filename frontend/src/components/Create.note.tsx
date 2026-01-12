@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Save, Type, AlignLeft, Tag as TagIcon } from 'lucide-react';
+import React, { useState } from "react";
+import { X, Save, Type, AlignLeft, Tag as TagIcon } from "lucide-react";
 
 interface CreateNote {
   title: string;
@@ -14,11 +14,16 @@ interface NoteFormProps {
   onCancel: () => void;
 }
 
-const NoteModal: React.FC<NoteFormProps> = ({ isOpen, initialData, onSubmit, onCancel }) => {
-  const [title, setTitle] = useState(initialData?.title || '');
-  const [content, setContent] = useState(initialData?.content || '');
+const NoteModal: React.FC<NoteFormProps> = ({
+  isOpen,
+  initialData,
+  onSubmit,
+  onCancel,
+}) => {
+  const [title, setTitle] = useState(initialData?.title || "");
+  const [content, setContent] = useState(initialData?.content || "");
   const [tags, setTags] = useState<string[]>(initialData?.tags || []);
-  const [currentTag, setCurrentTag] = useState('');
+  const [currentTag, setCurrentTag] = useState("");
 
   // // Reset form when initialData changes or modal opens
   // useEffect(() => {
@@ -32,12 +37,12 @@ const NoteModal: React.FC<NoteFormProps> = ({ isOpen, initialData, onSubmit, onC
   if (!isOpen) return null;
 
   const handleAddTag = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && currentTag.trim()) {
+    if (e.key === "Enter" && currentTag.trim()) {
       e.preventDefault();
       if (!tags.includes(currentTag.trim())) {
         setTags([...tags, currentTag.trim()]);
       }
-      setCurrentTag('');
+      setCurrentTag("");
     }
   };
 
@@ -53,9 +58,9 @@ const NoteModal: React.FC<NoteFormProps> = ({ isOpen, initialData, onSubmit, onC
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
       {/* 1. Backdrop/Overlay */}
-      <div 
-        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" 
-        onClick={onCancel} 
+      <div
+        className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity"
+        onClick={onCancel}
       />
 
       {/* 2. Modal Container */}
@@ -63,11 +68,11 @@ const NoteModal: React.FC<NoteFormProps> = ({ isOpen, initialData, onSubmit, onC
         <form onSubmit={handleSubmit} className="p-6 space-y-5">
           <div className="flex items-center justify-between mb-2">
             <h2 className="text-xl font-bold text-slate-800">
-              {initialData ? 'Edit Note' : 'Create New Note'}
+              {initialData ? "Edit Note" : "Create New Note"}
             </h2>
-            <button 
-              type="button" 
-              onClick={onCancel} 
+            <button
+              type="button"
+              onClick={onCancel}
               className="p-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
             >
               <X size={20} />
@@ -112,9 +117,16 @@ const NoteModal: React.FC<NoteFormProps> = ({ isOpen, initialData, onSubmit, onC
             </label>
             <div className="flex flex-wrap gap-2 p-2 bg-slate-50 border border-slate-200 rounded-lg min-h-[45px]">
               {tags.map((tag) => (
-                <span key={tag} className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md uppercase tracking-wider">
+                <span
+                  key={tag}
+                  className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-bold rounded-md uppercase tracking-wider"
+                >
                   {tag}
-                  <button type="button" onClick={() => removeTag(tag)} className="hover:text-blue-900">
+                  <button
+                    type="button"
+                    onClick={() => removeTag(tag)}
+                    className="hover:text-blue-900"
+                  >
                     <X size={12} />
                   </button>
                 </span>
@@ -144,7 +156,7 @@ const NoteModal: React.FC<NoteFormProps> = ({ isOpen, initialData, onSubmit, onC
               className="flex items-center gap-2 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-all shadow-md shadow-blue-200 active:scale-95"
             >
               <Save size={18} />
-              {initialData ? 'Update Note' : 'Save Note'}
+              {initialData ? "Update Note" : "Save Note"}
             </button>
           </div>
         </form>
