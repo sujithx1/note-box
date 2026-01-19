@@ -9,13 +9,14 @@ import {
 } from "lucide-react";
 import type { FC } from "react";
 import { useGetNoteById } from "../apis/notes";
+import { useNavigate } from "@tanstack/react-router";
 
 interface Props {
   noteId: string;
 }
 const NoteDetail: FC<Props> = ({ noteId }) => {
   const { data: note, isLoading, isError } = useGetNoteById(Number(noteId));
-
+const navigate = useNavigate();
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -48,7 +49,7 @@ const NoteDetail: FC<Props> = ({ noteId }) => {
       <nav className="sticky top-0 z-10 bg-white/80 backdrop-blur-md border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-between">
           <button
-            // onClick={() => navigate(-1)}
+            onClick={() => navigate({ to: "/" } )}
             className="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors group"
           >
             <div className="p-2 group-hover:bg-indigo-50 rounded-full transition-colors">
