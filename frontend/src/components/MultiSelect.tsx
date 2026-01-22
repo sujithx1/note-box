@@ -1,17 +1,18 @@
 import { useState, useRef, useEffect } from "react";
 import { Tag, X, ChevronDown } from "lucide-react";
+import { useGetTagsapi } from "../apis/notes";
 
 // Example master list of tags from your database/API
-const AVAILABLE_TAGS = [
-  "React",
-  "JavaScript",
-  "Tailwind",
-  "Node.js",
-  "Design",
-  "Work",
-  "Personal",
-  "Ideas",
-];
+// const AVAILABLE_TAGS = [
+//   "React",
+//   "JavaScript",
+//   "Tailwind",
+//   "Node.js",
+//   "Design",
+//   "Work",
+//   "Personal",
+//   "Ideas",
+// ];
 
 const TagSelector = ({
   selectedTags,
@@ -20,12 +21,13 @@ const TagSelector = ({
   selectedTags: string[];
   onTagsChange: (tags: string[]) => void;
 }) => {
+  const {data:AVAILABLE_TAGS=[]}=useGetTagsapi()
   const [query, setQuery] = useState("");
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Filter available tags based on search and exclude already selected ones
-  const filteredTags = AVAILABLE_TAGS.filter(
+  const filteredTags = AVAILABLE_TAGS?.filter(
     (tag) =>
       tag.toLowerCase().includes(query.toLowerCase()) &&
       !selectedTags.includes(tag),
@@ -55,6 +57,10 @@ const TagSelector = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+
+
+
 
   return (
     <div className="relative flex-1" ref={containerRef}>

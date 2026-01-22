@@ -18,10 +18,10 @@ export interface NoteFilter {
 }
 
 export const useGetNotes = (filters: NoteFilter) => {
-  return useQuery<Note[], Error>({
+  return useQuery<{ data: Note[]; count: number }, Error>({
     queryKey: ["notes", filters],
     queryFn: async () => {
-      const res = await api.get<Note[]>("/notes", {
+      const res = await api.get<{ data: Note[]; count: number }>("/notes", {
         params: {
           ...filters,
           tags: filters.tags?.join(","), // backend-friendly
@@ -92,5 +92,17 @@ export const useGetNoteById = (id?: number) => {
       return res.data;
     },
     enabled: Boolean(id), // 🔥 VERY IMPORTANT
+  });
+};
+
+
+
+export const useGetTagsapi=() => {
+return useQuery({
+    queryKey: ["tags"],
+    queryFn: async () => {
+      const res = await api.get<{ data: string[] }>("/tags");
+      return res.data.data;
+    },
   });
 };

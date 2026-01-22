@@ -1,4 +1,4 @@
-import { and, eq, sql, SQLWrapper } from "drizzle-orm";
+import { and, desc, eq, ilike, inArray, or, SQL, sql, SQLWrapper } from "drizzle-orm";
 import { db } from "../config/db";
 import { NoteSchema } from "../config/schema";
 import { noteDto } from "../dto/notes.dto";
@@ -46,28 +46,50 @@ async deleteNote(id: number): Promise<boolean> {
   
 }
 
-async getNotes(filter: NoteFilter): Promise<NoteEntity[]> {
+async getNotes(filter: NoteFilter): Promise<{count: number; notes: NoteEntity[]}> {
 
-  const conditions: SQLWrapper[] = [];
 
-  if (filter.tag) {
-    conditions.push(
-      sql`${NoteSchema.tags} @> ARRAY[${filter.tag}]::text[]`
-    );
-  }
+const conditions: SQL[] = [];
 
-  if (filter.searchQuery) {
-    const search = filter.searchQuery;
-    conditions.push(
-      sql`${NoteSchema.title} ILIKE ${`%${search}%`} OR ${NoteSchema.content} ILIKE ${`%${search}%`}`
-    );
-  }
+const page = Number(filter.page) || 1;
+const limit = Number(filter.limit) || 10;
+const offset = (page - 1) * limit;
 
-  const query = db.select().from(NoteSchema).where(conditions.length > 0 ? and(...conditions) : undefined);
+// Filter by tags
+if (filter.tags?.length) {
+  conditions.push(
+    sql`${NoteSchema.tags} && ${filter.tags}`
+  );
+}
 
-  const notes = await query;
+// Search filter
+if (filter.searchQuery) {
+  const search = `%${filter.searchQuery.trim()}%`;
 
-  return notes.map(noteDto);
+  conditions.push(
+    or(
+      ilike(NoteSchema.title, search),
+      ilike(NoteSchema.content, search)
+    )as SQL
+  );
+}
+
+const query = await db.query.NoteSchema.findMany({
+  where: conditions.length ? and(...conditions) : undefined,
+  orderBy:[desc(NoteSchema.createdAt)],
+  limit,
+  offset,
+})
+
+const count =await
+ db.select({count:sql<number>`count(*)`})
+ .from(NoteSchema).where(conditions.length ? and(...conditions) : undefined);
+
+return {
+  count: count[0].count,
+  notes: query.map(noteDto),
+}
+
 }
 
 updateNote(id: number, noteData: { title?: string; content?: string; tags?: string[]; }): Promise<NoteEntity | null> {
