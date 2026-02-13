@@ -52,7 +52,7 @@ async getNotes(filter: NoteFilter): Promise<{count: number; notes: NoteEntity[]}
 const conditions: SQL[] = [];
 
 const page = Number(filter.page) || 1;
-const limit = Number(filter.limit) || 10;
+const limit = Number(filter.limit) || 1000;
 const offset = (page - 1) * limit;
 
 // Filter by tags
